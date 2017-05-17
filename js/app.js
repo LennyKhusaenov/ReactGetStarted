@@ -1,67 +1,92 @@
-var Comments = React.createClass({
-    render: function () {
-        return (
-            <div className="comments">
-                Нет новостей и комментировать нечего
-            </div>
-        );
-
+var my_news = [
+    {
+        author: 'Саша Печкин',
+        text: 'В четверг, четвертого числа...',
+        bigText: '1sdadfgsdfsdfjbsodifjboidfb idsfjbodbodf oidbosidbdnvdb oidjvgd'
+    },
+    {
+        author: 'Просто Вася',
+        text: 'Считаю, что $ должен стоить 35 рублей!',
+        bigText: '2sdadfgsdfsdfjbsodifjboidfb idsfjbodbodf oidbosidbdnvdb oidjvgd'
+    },
+    {
+        author: 'Гость',
+        text: 'Бесплатно. Скачать. Лучший сайт - http://localhost:3000',
+        bigText: '3sdadfgsdfsdfjbsodifjboidfb idsfjbodbodf oidbosidbdnvdb oidjvgd'
     }
-})
+];
+var Article = React.createClass({
+    propTypes: {
+        data: React.PropTypes.shape({
+            author: React.PropTypes.string.isRequired,
+            text: React.PropTypes.string.isRequired,
+            bigText: React.PropTypes.string.isRequired
+        })
+    },
+    getInitialState: function () {
+        return {
+            visible: false
+        };
 
+    },
+    readmoreClick: function (e) {
+        e.preventDefault();
+        this.setState({visible: true});
 
+    },
+    render: function () {
+        var author = this.props.data.author,
+            text = this.props.data.text,
+            bigText = this.props.data.bigText,
+            visible = this.state.visible;
+
+        return (
+            <div className='article'>
+                <p className='news__author'>{author}:</p>
+                <p className='news__text'>{text}</p>
+                <a href="#"
+                   onClick={this.readmoreClick}
+                   className={'news__readmore ' + (visible ? 'none': '')}>
+                    Подробнее
+                </a>
+                <p className={'news__big-text ' + (visible ? '': 'none')}>{bigText}</p>
+            </div>
+        )
+    }
+});
 var News = React.createClass({
+    propTypes: {
+        data: React.PropTypes.array.isRequired
+    },
     render: function () {
         var data = this.props.data;
         var newsTemplate;
-
-        if(data.length>0){
-        newsTemplate = data.map(function (item, index) {
-            return (
-                <div key={index}>
-                    <p className="news_author"><strong>{item.author}</strong></p>
-                    <p className="news_description">{item.text}</p>
-                </div>
-            )
-        })
-        }else {
+        if (data.length > 0) {
+            newsTemplate = data.map(function (item, index) {
+                return (
+                    <div key={index}>
+                        <Article data={item}/>
+                    </div>
+                )
+            })
+        } else {
             newsTemplate = <p>К сожалению новостей нет</p>
         }
-
-        // console.log(newsTemplate);
-
         return (
-            <div className="news">
+            <div className='news'>
                 {newsTemplate}
-                <strong className={data.length>0?'':'none'}>Всего новостей: {data.length}</strong>
+                <strong className={'news__count ' + (data.length > 0 ? '':'none') }>Всего
+                    новостей: {data.length}</strong>
             </div>
         );
     }
 });
-
-var my_news = [
-    {
-        author: 'Petr Pechkin',
-        text: 'once uppon a time ...'
-    },
-    {
-        author: 'Simple Vasya',
-        text: 'wanna go fest ...'
-    },
-    {
-        author: 'Guest',
-        text: 'Free. Download. Best service - http://localhost:3000'
-    }
-
-];
-
 var App = React.createClass({
     render: function () {
         return (
-            <div className="app">
-                Всем привет, я компонент App!Я умею отображать новости.
-                <News data={my_news}/>{/*добавили свойство data */}
-                <Comments />
+            <div className='app'>
+                <h3>Новости</h3>
+                <News data={my_news}/>{/* */}
             </div>
         );
     }
